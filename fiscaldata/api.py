@@ -22,6 +22,15 @@ class Response:
     _endpoint: str
     _params: dict
 
+    def __repr__(self):
+        return f"{self.__class__.__name__}(reponse={self.response}, data=<{len(self.data)} items>)"
+
+    @property
+    def df(self):
+        import pandas as pd
+
+        return pd.DataFrame(self.data)
+
     def next_page(self):
         return self._get_page("next")
 
@@ -69,10 +78,17 @@ class EndpointBuilder:
 
 
 class FiscalData:
-    """
-    Usage:
-        api = FiscalData()
-        api.v2.debt.tror.data_act_compliance(...)
+    """Interface to the Treasury FiscalData API.
+
+    Access to the APi endpoints is via dynamic attributes corresponding to the endpoint
+    URL parts. See example below.
+
+    Example:
+
+        >>> api = FiscalData()
+        >>> endpoint = api.v2.debt.tror.data_act_compliance
+        >>> response = endpoint()  # doctest: +SKIP
+
     """
 
     def __call__(self, endpoint: str) -> EndpointBuilder:

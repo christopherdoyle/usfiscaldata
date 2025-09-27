@@ -1,0 +1,19 @@
+[project]
+name = "fiscaldatapy"
+version = "0.1.0"
+description = "A Python package for working with treasury fiscal data."
+authors = [
+    { name = "Your Name", email = "your.email@example.com" }
+]
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "requests>=2.0,<3"
+]
+
+[dependency-groups]
+test = [
+    "pytest>=6.0,<7",
+    "requests-mock~=1.12",
+    "pandas>=1.0,<3",
+]
