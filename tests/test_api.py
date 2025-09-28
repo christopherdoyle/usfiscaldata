@@ -1,7 +1,7 @@
 import pytest
 import requests
 
-from fiscaldata import api
+from usfiscaldata import api
 
 
 class TestEndpointBuilder:

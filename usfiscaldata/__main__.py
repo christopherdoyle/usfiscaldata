@@ -1,13 +1,13 @@
 import argparse
 import logging
 
-from fiscaldata import FiscalData
+from usfiscaldata import FiscalData
 
-logger = logging.getLogger("fiscaldata.__main__")
+logger = logging.getLogger("usfiscaldata.__main__")
 
 
 def setup_logging():
-    root_logger = logging.getLogger("fiscaldata")
+    root_logger = logging.getLogger("usfiscaldata")
     root_logger.setLevel(logging.DEBUG)
 
     handler = logging.StreamHandler()

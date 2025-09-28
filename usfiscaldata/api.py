@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 import requests
 
-from fiscaldata.filter_ import Filter
+from usfiscaldata.filter_ import Filter
 
 
 BASE_URL = "https://api.fiscaldata.treasury.gov/services/api/fiscal_service/"
@@ -28,7 +28,7 @@ class Response:
     @property
     def df(self):
         import pandas as pd
-        from fiscaldata.datatypes import cast_df
+        from usfiscaldata.datatypes import cast_df
 
         df = pd.DataFrame(self.data)
         df = cast_df(

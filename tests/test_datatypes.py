@@ -1,4 +1,4 @@
-from fiscaldata import datatypes
+from usfiscaldata import datatypes
 
 import pandas as pd
 
@@ -29,6 +29,6 @@ def test_cast_string():
 
 def test_cast_number():
     s = pd.Series(["1123", "3049000", "null"])
-    expected = pd.Series([1123, 3049000, "null"])
+    expected = pd.to_numeric(pd.Series([1123, 3049000, pd.NA]))
     actual = datatypes.cast_number(s, fmt="10.2")
     pd.testing.assert_series_equal(actual, expected)

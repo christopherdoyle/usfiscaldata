@@ -1,13 +1,20 @@
 # Treaury Fiscal Data API Client for Python
 
-This package provides a Python client for accessing the U.S. Treasury Fiscal Data API. 
+Python client for accessing the [U.S. Treasury Fiscal Data API](https://fiscaldata.treasury.gov/api-documentation/).
+
+## Installation
+
+```bash
+python -m pip install usfiscaldata
+```
 
 ## Usage
 
 ### Example
 
 ```python
-from fiscaldata import FiscalData, Filter
+from usfiscaldata import FiscalData, Filter
+
 client = FiscalData()
 endpoint = client.v1.accounting.od.auctions_query
 filter_ = Filter()
@@ -24,7 +31,8 @@ The client implements a generic dot-accessor interface for the endpoints, so you
 The endpoint can also be specified as a string.
 
 ```python
-from fiscaldata import FiscalData
+from usfiscaldata import FiscalData
+
 client = FiscalData()
 endpoint = client.v2.debt.tror.data_act_compliance
 endpoint = client("v2/debt/tror/data_act_compliance")
@@ -46,3 +54,4 @@ filter_["fiscal_year"].isin([1999, 2000, 2001])
 
 The response object contains a `meta` attribute with pagination information, and a `next_page` method to retrieve the next page of results.
 When there are no more pages, `next_page` returns `None`.
+You can also just call `.all()` as in above example.
