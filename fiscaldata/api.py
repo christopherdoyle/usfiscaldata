@@ -28,8 +28,13 @@ class Response:
     @property
     def df(self):
         import pandas as pd
+        from fiscaldata.datatypes import cast_df
 
-        return pd.DataFrame(self.data)
+        df = pd.DataFrame(self.data)
+        df = cast_df(
+            df, data_types=self.meta["dataTypes"], data_formats=self.meta["dataFormats"]
+        )
+        return df
 
     def next_page(self):
         return self._get_page("next")
@@ -73,8 +78,61 @@ class EndpointBuilder:
         return EndpointBuilder(self._fiscal_data, self._path_segments + [name])
 
     def __call__(self, **params) -> Response:
-        endpoint = "/".join(self._path_segments)
-        return self._fiscal_data.do_request(endpoint, params)
+        return self._fiscal_data.do_request(self.endpoint, params)
+
+    @property
+    def endpoint(self):
+        return "/".join(self._path_segments)
+
+    def all(self, **params) -> Response:
+        """Fetch all pages of results for the endpoint.
+
+        This method will make multiple requests to fetch all available data, based on the
+        `total-pages` metadata field in the response.
+
+        Note that this may result in a large number of requests and a large amount of data
+        being loaded into memory. Use with caution.
+
+        Example:
+
+            >>> api = FiscalData()
+            >>> endpoint = api.v2.debt.tror.data_act_compliance
+            >>> response = endpoint.all()  # doctest: +SKIP
+
+        """
+        logger.info("Fetching all pages of results for '%s'", self.endpoint)
+        params = params.copy()
+        params["page[number]"] = 1
+        params["page[size]"] = 100
+        logger.info("Requesting page 1/unknown")
+        first_response = self(**params)
+        total_pages = first_response.meta.get("total-pages", 1)
+        total_count = first_response.meta.get("total-count", 0)
+        logger.info("Total count = %d", total_count)
+        all_data = first_response.data.copy()
+
+        for page in range(2, total_pages + 1):
+            logger.info("Requesting page %d/%d", page, total_pages)
+            params.update({"page[number]": page})
+            page_response = self(**params)
+            all_data.extend(page_response.data)
+
+        if len(all_data) != total_count:
+            logger.warning(
+                "Expected count (%d) does not match actual count of returned data (%d)",
+                total_count,
+                len(all_data),
+            )
+
+        return Response(
+            response=first_response.response,
+            data=all_data,
+            meta=first_response.meta,
+            links=first_response.links,
+            _fiscal_data=self._fiscal_data,
+            _endpoint="/".join(self._path_segments),
+            _params=params,
+        )
 
 
 class FiscalData:

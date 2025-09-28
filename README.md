@@ -4,6 +4,20 @@ This package provides a Python client for accessing the U.S. Treasury Fiscal Dat
 
 ## Usage
 
+### Example
+
+```python
+from fiscaldata import FiscalData, Filter
+client = FiscalData()
+endpoint = client.v1.accounting.od.auctions_query
+filter_ = Filter()
+filter_["record_date"] <= "1984-01-01"
+response = endpoint.all(filter=filter_)
+df = response.df
+print(df.shape)
+print(df.head())
+```
+
 ### Endpoints
 
 The client implements a generic dot-accessor interface for the endpoints, so you need to know the full endpoint path.
@@ -28,12 +42,7 @@ filter_["amount"] > 1000
 filter_["fiscal_year"].isin([1999, 2000, 2001])
 ```
 
-
 ### Response Pagination
 
 The response object contains a `meta` attribute with pagination information, and a `next_page` method to retrieve the next page of results.
 When there are no more pages, `next_page` returns `None`.
-
-## Example
-
-For a full example see `example.py`.
